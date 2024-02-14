@@ -1,1 +1,47 @@
+USE [StockManagementDB]
+-- =============================================
+-- Author:	                      <Author,,Name>
+-- Create date:                   <Create Date,,>
+-- Description:	                  <Description,,>
+-- =============================================
+
+ALTER PROCEDURE [dbo].[sp_InsertItem]
+	
+	@grpId VARCHAR(10),
+	@catId VARCHAR(10),
+	@itemName VARCHAR(20),
+	@itemDesc VARCHAR(100),
+	@itemActive VARCHAR(5)
+		
+AS
+BEGIN
+	DECLARE @count INT
+		
+		SET @count =(SELECT COUNT(*) FROM AssetItemMaster where ItemName=@itemName)		
+		IF (@count <= 0)
+		BEGIN TRY
+		BEGIN TRANSACTION T1
+			DECLARE @tmpItemId VARCHAR(10),@nItemId VARCHAR(10),@itemId VARCHAR(20)
+			
+			SET @tmpItemId = (SELECT MAX(ItemID) FROM AssetItemMaster)
+				
+			IF @tmpItemId IS NULL
+				BEGIN
+					SET @itemId = 'ITM' + '001'
+				END
+			ELSE
+				BEGIN
+					SET @nItemId = CAST(SUBSTRING(@tmpItemId,4,LEN(@tmpItemId))AS INT)+ 1
+					SET @itemId = SUBSTRING(@tmpItemId,1,3) + REPLICATE('0',3-LEN(@nItemId))+ @nItemId
+				END
+					
+			INSERT INTO AssetItemMaster(ItemID,ItemName,CategoryID,GroupID,[Description],IsActive,EntryDate,ModiDate) 
+						VALUES(@itemId,@itemName,@catId,@grpId,@itemDesc,@itemActive,GETDATE(),GETDATE()) 
+		COMMIT TRANSACTION T1						
+		END TRY
+		BEGIN CATCH
+			ROLLBACK TRANSACTION T1
+			SELECT ERROR_MESSAGE() AS ErrorMessage
+		END CATCH
+END
 
