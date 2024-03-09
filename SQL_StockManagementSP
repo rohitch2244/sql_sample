@@ -44,4 +44,10 @@ BEGIN
 			SELECT ERROR_MESSAGE() AS ErrorMessage
 		END CATCH
 END
+--------------------------------------------------------------------------------------------------
+EXECUTE sp_InsertItem 'ABC123','ABC','Rohit','ABCDEF','NO'
+---------------------------------------------OUTPUT-----------------------------------------------
+ItemID	ItemName    CategoryID	 GroupID    Description	 IsActive   EntryDate	         ModiDate
+ITM001	ABC123	    ABC	         Rohit	     ABCDEF	  NO	    Feb 15 2024  5:25PM	 Feb 15 2024  5:25PM
+ITM002	ABC1235	    ABC4	 Rohit5	     ABCDEF6	  YES	    Feb 15 2024  5:26PM	 Feb 15 2024  5:26PM
 
